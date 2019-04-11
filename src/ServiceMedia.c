@@ -500,7 +500,7 @@ int __trt__GetVideoSourceConfiguration(struct soap *soap, struct _trt__GetVideoS
 
 int __trt__GetVideoEncoderConfiguration(struct soap *soap, struct _trt__GetVideoEncoderConfiguration *trt__GetVideoEncoderConfiguration, struct _trt__GetVideoEncoderConfigurationResponse *trt__GetVideoEncoderConfigurationResponse)
 {
-    DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Media: %s\n", __FUNCTION__);
+    DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "CALLED WITH DATA IN RESPONSE: Media: %s\n", __FUNCTION__);
     
     trt__GetVideoEncoderConfigurationResponse = hai_soap_malloc(soap, sizeof(struct _trt__GetVideoEncoderConfigurationResponse));
     
