@@ -14,7 +14,6 @@
 #include "smacros.h"
 
 
-
 int __trt__GetServiceCapabilities(struct soap *soap, struct _trt__GetServiceCapabilities *trt__GetServiceCapabilities, struct _trt__GetServiceCapabilitiesResponse *trt__GetServiceCapabilitiesResponse)
 {
     DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Media: %s\n", __FUNCTION__);
@@ -502,6 +501,37 @@ int __trt__GetVideoSourceConfiguration(struct soap *soap, struct _trt__GetVideoS
 int __trt__GetVideoEncoderConfiguration(struct soap *soap, struct _trt__GetVideoEncoderConfiguration *trt__GetVideoEncoderConfiguration, struct _trt__GetVideoEncoderConfigurationResponse *trt__GetVideoEncoderConfigurationResponse)
 {
     DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Media: %s\n", __FUNCTION__);
+    
+    trt__GetVideoEncoderConfigurationResponse = hai_soap_malloc(soap, sizeof(struct _trt__GetVideoEncoderConfigurationResponse));
+    
+    trt__GetVideoEncoderConfigurationResponse->Configuration = hai_soap_malloc(soap, sizeof(struct tt__VideoEncoderConfiguration));
+    struct tt__VideoEncoderConfiguration *config = trt__GetVideoEncoderConfigurationResponse->Configuration;
+    config->Name = strdup("h264_high");
+    config->token = strdup("h264_high");
+    config->Encoding = tt__VideoEncoding__H264;
+    config->Resolution = hai_soap_malloc(soap, sizeof(struct tt__VideoResolution));
+    config->Resolution[0].Width = 1280;
+    config->Resolution[0].Height = 720; // FRANK FIXME, use from system
+    config->Quality = 100.0;
+    config->RateControl = hai_soap_malloc(soap, sizeof(struct tt__VideoRateControl));
+    config->RateControl->FrameRateLimit = 60;
+    config->RateControl->EncodingInterval = 1; // 1 means all frames are encoded
+    config->RateControl->BitrateLimit = 100000; // FRANK FIXME: get from network "Total TX Bandwidth Limit"
+    config->H264 = hai_soap_malloc(soap, sizeof(struct tt__H264Configuration));
+    config->H264->GovLength = 100; // gop
+    config->H264->H264Profile = tt__H264Profile__Main; // FIXME GET FORM ENC
+    config->Multicast = hai_soap_malloc(soap, sizeof(struct tt__MulticastConfiguration));
+    config->Multicast->Address = hai_soap_malloc(soap, sizeof(struct tt__IPAddress));
+    config->Multicast->Address->Type = tt__IPType__IPv4;
+    config->Multicast->Address->IPv4Address = hai_soap_malloc(soap, sizeof(char) * HAIVISION_MAX_ONVIF_IPV4_LENGTH);
+    strcpy(config->Multicast->Address->IPv4Address, "0.0.0.0");//"224.65.11.199"); // FIXME use actual multicast if configured as such
+    config->Multicast->Address->IPv6Address = NULL;
+    config->Multicast->Port = 0; // FIXME correct port.
+    config->Multicast->TTL = 60;
+    config->Multicast->AutoStart = 0;
+    config->Multicast->__size = 0;
+    config->Multicast->__any = NULL;
+    
     return SOAP_OK;
 }
 
