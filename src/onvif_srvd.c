@@ -13,6 +13,7 @@
 #include "daemon.h"
 #include "smacros.h"
 #include "ServiceContext.h"
+#include "ServiceDiscovery.h"
 #include "hai_soap.h"
 #include "toolbox.h"
 
@@ -404,9 +405,10 @@ void init_gsoap(void)
     soap->send_timeout = 5; // timeout in sec
     soap->recv_timeout = 5; // timeout in sec
 
-
     //save pointer of service_ctx in soap
     soap->user = (void*)&service_ctx;
+    
+    haiSoapProbe();
 }
 
 

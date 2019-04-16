@@ -14,6 +14,7 @@
 #include "smacros.h"
 
 
+
 int __trt__GetServiceCapabilities(struct soap *soap, struct _trt__GetServiceCapabilities *trt__GetServiceCapabilities, struct _trt__GetServiceCapabilitiesResponse *trt__GetServiceCapabilitiesResponse)
 {
     DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Media: %s\n", __FUNCTION__);
@@ -371,8 +372,8 @@ int __trt__GetVideoEncoderConfigurations(struct soap *soap, struct _trt__GetVide
     trt__GetVideoEncoderConfigurationsResponse = hai_soap_malloc(soap, sizeof(struct _trt__GetVideoEncoderConfigurationsResponse));
     
     trt__GetVideoEncoderConfigurationsResponse->__sizeConfigurations = 1;
-    trt__GetVideoEncoderConfigurationsResponse->Configurations = hai_soap_malloc(soap, sizeof(struct tt__VideoEncoderConfiguration));
-    struct tt__VideoEncoderConfiguration *config = trt__GetVideoEncoderConfigurationsResponse->Configurations;
+    trt__GetVideoEncoderConfigurationsResponse->Configurations = hai_soap_malloc(soap, sizeof(struct tt__VideoEncoderConfiguration)*trt__GetVideoEncoderConfigurationsResponse->__sizeConfigurations);
+    struct tt__VideoEncoderConfiguration *config = &trt__GetVideoEncoderConfigurationsResponse->Configurations[0];
     config->Name = strdup("h264_high");
     config->token = strdup("h264_high");
     config->Encoding = tt__VideoEncoding__H264;
@@ -500,8 +501,9 @@ int __trt__GetVideoSourceConfiguration(struct soap *soap, struct _trt__GetVideoS
 
 int __trt__GetVideoEncoderConfiguration(struct soap *soap, struct _trt__GetVideoEncoderConfiguration *trt__GetVideoEncoderConfiguration, struct _trt__GetVideoEncoderConfigurationResponse *trt__GetVideoEncoderConfigurationResponse)
 {
-    DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "CALLED WITH DATA IN RESPONSE: Media: %s\n", __FUNCTION__);
+    DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Media: %s X\n", __FUNCTION__);
         
+    DBGPRINTEX(g_hDbg, DBG_LEVEL_INFO, "Will return data\n");
     trt__GetVideoEncoderConfigurationResponse = hai_soap_malloc(soap, sizeof(struct _trt__GetVideoEncoderConfigurationResponse));
     
     trt__GetVideoEncoderConfigurationResponse->Configuration = hai_soap_malloc(soap, sizeof(struct tt__VideoEncoderConfiguration));

@@ -4978,7 +4978,7 @@ int TOOLBOX_GetTempFilenameW(const wchar_t * path, wchar_t * out_filename)
 	outfd = mkstemp(out_filename);
 	if (outfd == -1) 
 	{
-		printf("<!-- mkstemp on filename(%s) failed -->\n", out_filename);
+		//printf("<!-- mkstemp on filename(%s) failed -->\n", out_filename);
 		return -10;
 	}
 	close(outfd);

@@ -42,12 +42,12 @@ CFLAGS           += -I$(MAKITO_INCLUDE)
 CFLAGS           += -I$(GSOAP_DIR) -I$(GSOAP_CUSTOM_DIR) -I$(GSOAP_PLUGIN_DIR) -I$(GSOAP_IMPORT_DIR)
 CFLAGS           +=  -Wall -pipe -Wfatal-errors -pthread
 
-GCC              ?=  gcc
+GCC           ?=  gcc
 GSOAP_CONFIGURE  ?= 
 
 ifdef TARGET_ARM7
-	GCC       ?=  arm-none-linux-gnueabi-gcc
-	GSOAP_CONFIGURE ?= --prefix=/usr --program-prefix= --target=arm-none-linux-gnueabi --build=i686-pc-linux-gnu56 --host=arm-none-linux-gnueabi --with-gnu-ld --disable-lfs --with-openssl --with-zlib
+	GCC       =  arm-none-linux-gnueabi-gcc
+	GSOAP_CONFIGURE = --prefix=/usr --program-prefix= --target=arm-none-linux-gnueabi --build=i686-pc-linux-gnu56 --host=arm-none-linux-gnueabi --with-gnu-ld --disable-lfs --with-openssl --with-zlib
 	MAKITO_INCLUDE = /home/flemieux/makito2_enc_2.2.1/components/include/
 else
 	MAKITO_INCLUDE = $(COMMON_DIR)/sessmgr_alt/
@@ -58,7 +58,6 @@ CFLAGS += -I$(MAKITO_INCLUDE)
 
 
 ifdef TARGET_ARM7
-	
 	#LDFLAGS=" $LDFLAGS -L/usr/local/haivision/makito2fs/usr/lib"
 	CFLAGS  += -L/home/flemieux/makito2_enc_2.2.1/build/OSCAR/output/libs
 	CFLAGS  += -lmxsessmgr -lmxtools -lmxcfgfile -lcrypt -lhailogin -lmxclock -lmxfpga -lrt
@@ -101,6 +100,7 @@ SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c         \
            $(COMMON_DIR)/ServiceContext.c         \
            $(COMMON_DIR)/ServiceDevice.c          \
            $(COMMON_DIR)/ServiceMedia.c           \
+           $(COMMON_DIR)/ServiceDiscovery.c       \
            $(COMMON_DIR)/hai_soap.c               \
            $(COMMON_DIR)/toolbox/toolbox-linkedlist.c     \
            $(COMMON_DIR)/toolbox/toolbox-char-array.c     \
@@ -114,6 +114,7 @@ SOURCES  = $(COMMON_DIR)/$(DAEMON_NAME).c         \
            $(COMMON_DIR)/toolbox/toolbox.c        \
            $(GENERATED_DIR)/soapC.c               \
            $(GENERATED_DIR)/soapServer.c          \
+           $(GSOAP_PLUGIN_DIR)/wsaapi.c \
            $(SOAP_SRC)                            \
            $(WSSE_SOURCES)
 
@@ -200,8 +201,16 @@ clean:
 	-@rm -f $(OBJECTS)
 	-@rm -f $(DEBUG_OBJECTS)
 	-@rm -f .depend
-	-@rm -f -d -R $(GENERATED_DIR)
+	-@rm -f -R $(GENERATED_DIR)
 	-@rm -f *.*~
+
+.PHONY: preparm
+preparm:
+	-@rm -f $(DAEMON_NAME)
+	-@rm -f $(DAEMON_NAME)_$(DEBUG_SUFFIX)
+	-@rm -f $(OBJECTS)
+	-@rm -f $(DEBUG_OBJECTS)
+	-@rm -f .depend
 
 
 
@@ -246,10 +255,13 @@ $(GENERATED_DIR)/soapC.c: $(GENERATED_DIR)/onvif.h
 	$(SOAPCPP2) -c -L -x -S -d $(GENERATED_DIR) -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $<
 
 
+# this will also generate soapServer.c
+$(GENERATED_DIR)/wsddC.c: $(GENERATED_DIR)/onvif.h
+	$(SOAPCPP2) -c -L -x -S -d $(GENERATED_DIR) -pwsdd -I$(GSOAP_DIR):$(GSOAP_IMPORT_DIR) $(GSOAP_IMPORT_DIR)/wsdd5.h $<
+
 
 # This targets is needed for parallel work of make
-$(OBJECTS) $(DEBUG_OBJECTS) $(SOAP_SRC) $(WSSE_SOURCES): $(GENERATED_DIR)/soapC.c
-
+$(OBJECTS) $(DEBUG_OBJECTS) $(SOAP_SRC) $(WSSE_SOURCES): $(GENERATED_DIR)/soapC.c $(GENERATED_DIR)/wsddC.c
 
 
 
